@@ -1,0 +1,2 @@
+[workspace]
+members = ["ffi-example-sys", "ffi-example"]
