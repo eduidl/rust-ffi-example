@@ -16,6 +16,8 @@ fn main() {
         ffi_example_sys::print_str(c_string_ptr);
     }
 
+    // creating danglng pointer intentionally
+    #[allow(temporary_cstring_as_ptr)]
     let c_string_ptr = CString::new("Hello FFI").unwrap().as_ptr();
     unsafe {
         ffi_example_sys::print_str(c_string_ptr);
@@ -40,7 +42,8 @@ fn main() {
     let size = 101;
     let ptr = unsafe { ffi_example_sys::get_sequential_array(size) };
     let slice = unsafe { std::slice::from_raw_parts(ptr, size) };
-    assert_eq!(slice.iter().fold(0, |sum, a| sum + a), 5050);
+    assert_eq!(slice.iter().sum::<i32>(), 5050);
+    #[allow(clippy::drop_ref)]
     drop(slice);
     unsafe {
         ffi_example_sys::free_array(ptr);
@@ -49,8 +52,8 @@ fn main() {
     let ptr = unsafe { ffi_example_sys::get_sequential_array(size) };
     let cvec =
         unsafe { c_vec::CVec::new_with_dtor(ptr, size, |ptr| ffi_example_sys::free_array(ptr)) };
-    assert_eq!(cvec.iter().fold(0, |sum, a| sum + a), 5050);
+    assert_eq!(cvec.iter().sum::<i32>(), 5050);
 
     let seq = Sequence::new(size);
-    assert_eq!(seq.iter().fold(0, |sum, a| sum + a), 5050);
+    assert_eq!(seq.iter().sum::<i32>(), 5050);
 }
