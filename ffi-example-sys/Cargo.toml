@@ -9,5 +9,5 @@ edition = "2018"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.56"
+bindgen = "0.60"
 cc = "1.0"
